@@ -24,6 +24,8 @@ Published with permission from Ludeon Studios.
 
 [Ludeon Forums thread](https://ludeon.com/forums/index.php?topic=49851.0).
 
+---
+
 ## In-depth
 
 ### What are *reference assemblies*?
