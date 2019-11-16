@@ -17,6 +17,8 @@ Basically, I can clone the git repository of a mod, open it in my IDE, click *Bu
 
 Obviously, you could make a mod self-contained by storing the actual game assemblies along with your code. That would yield the exact same result. However, doing so in a publicly accessible repository violates the RimWorld EULA, which explicitly states that "*you can't distribute anything we've made unless we agree to it*".
 
+Of course, if you don't keep your code in a public repository this is less of an issue. And all the reasons why you should keep your source code public is a different topic :)
+
 ### What are *reference assemblies*?
 There are two kinds of assemblies: *Implementation assemblies* and *reference assemblies*.
 
@@ -30,12 +32,12 @@ Firstly, reference assemblies are much smaller in size, which makes the package 
 Secondly, Ludeon Studios has permitted this package to be published - on the condition that the assemblies contain only metadata.
 
 ### Where can I get it?
-It is available on [nuget.org](https://www.google.com). 
+It is available on [nuget.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref/1.0.2408-beta). 
 
 #### Important note
-This package is only compatible with projects using PackageReferences. It's a different, much better way to organize your NuGet references than packages.config. However, it is easy to migrate your project from packages.config to PackageReference. See [this guide](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
+This package is only compatible with projects using `PackageReference`. It's a different, much better way to organize your NuGet references than `packages.config`. However, it is easy to migrate your project from `packages.config` to `PackageReference`. See [this guide](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
 
-Add **RimRef** to your mod project by right-clicking **Dependencies/References** -> **Manage NuGet packages**. 
+Add **RimRef** to your mod project by right-clicking **Dependencies** or **References** -> **Manage NuGet packages**. 
 
 Tick the *Include prerelease* checkbox, search for **Krafs.Rimworld.Ref** and install.
 
