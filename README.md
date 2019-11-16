@@ -18,8 +18,10 @@ Basically, I can clone the git repository of a mod, open it in my IDE, click *Bu
 Obviously, you could make a mod self-contained by storing the actual game assemblies along with your code. That would yield the exact same result. However, doing so in a publicly accessible repository violates the RimWorld EULA, which explicitly states that "*you can't distribute anything we've made unless we agree to it*".
 
 ### What are *reference assemblies*?
-There are two kinds of assemblies: *Implementation assemblies* and *reference assemblies*. 
+There are two kinds of assemblies: *Implementation assemblies* and *reference assemblies*.
+
 *Implementation assemblies* are simply full, regular assemblies used in applications. 
+
 *Reference assemblies* derive from implementation assemblies, and contain the exact same public metadata, but all actual logic has been removed. All methods are empty. Calling a method in a reference assembly will yield a runtime exception. But the compiler only cares about the metadata, so we can use reference assemblies to build our mods.
 
 ### Why not distribute the *implementation assemblies* instead?
