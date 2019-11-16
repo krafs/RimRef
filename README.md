@@ -28,3 +28,17 @@ There are two kinds of assemblies: *Implementation assemblies* and *reference as
 Firstly, reference assemblies are much smaller in size, which makes the package much lighter.
 
 Secondly, Ludeon Studios has permitted this package to be published - on the condition that the assemblies contain only metadata.
+
+### Where can I get it?
+It is available on [nuget.org](https://www.google.com). 
+
+#### Important note
+This package is only compatible with projects using PackageReferences. It's a different, much better way to organize your NuGet references than packages.config. However, it is easy to migrate your project from packages.config to PackageReference. See [this guide](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
+
+Add **RimRef** to your mod project by right-clicking **Dependencies/References** -> **Manage NuGet packages**. 
+
+Tick the *Include prerelease* checkbox, search for **Krafs.Rimworld.Ref** and install.
+
+Don't forget to remove the old references to the actual game assemblies.
+
+Questions and feedback is welcome. There is a thread on Ludeon Forums [here](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
