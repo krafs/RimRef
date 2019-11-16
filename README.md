@@ -43,4 +43,4 @@ Tick the *Include prerelease* checkbox, search for **Krafs.Rimworld.Ref** and in
 
 Don't forget to remove the old references to the actual game assemblies.
 
-Questions and feedback is welcome. There is a thread on Ludeon Forums [here](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
+Questions and feedback is welcome. There is a thread on Ludeon Forums [here](https://ludeon.com/forums/index.php?topic=49851.0).
