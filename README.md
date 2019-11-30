@@ -18,7 +18,7 @@ Basically, anyone can clone the git repository of a self-contained mod, open it 
 It is available on [nuget.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref).
 Using Visual Studio - Add it to your mod project by right-clicking **Dependencies** or **References** -> **Manage NuGet packages**. 
 
-Tick the *Include prerelease* checkbox, search for **Krafs.Rimworld.Ref** and install.__**__.
+Search for **Krafs.Rimworld.Ref** and install.__**__.
 
  -Don't forget to remove the old references to the actual game assemblies!
 
@@ -47,6 +47,6 @@ Secondly, Ludeon Studios has permitted this package to be published - on the con
 __*__* Obviously, you could make a mod self-contained by storing the actual game assemblies along with your code. That would yield the exact same result. However, doing so in a publicly accessible repository violates the RimWorld EULA, which explicitly states that "you can't distribute anything we've made unless we agree to it".
 Of course, if you don't keep your code in a public repository this is less of an issue. And all the reasons why you should keep your source code public is the topic for another time :)
 
-__**__ This package is only compatible with projects using ´PackageReference´. It's a different, much better way to organize your NuGet references than ´packages.config´.
+__**__ This package is only compatible with projects using PackageReference. It's a different, much better way to organize your NuGet references than packages.config.
 
-Migrating your project from ´packages.config´ to ´PackageReference´ is easy. See [this guide](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
+Migrating your project from packages.config to PackageReference is easy. See [this guide](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
