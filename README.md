@@ -16,7 +16,7 @@ Basically, anyone can clone the git repository of a self-contained mod, open it 
 
 ### Where can I get it?
 It is available on [nuget.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref).
-Using Visual Studio - Add it to your mod project by right-clicking **Dependencies** or **References** -> **Manage NuGet packages**. 
+Using Visual Studio - Add it to your mod project by right-clicking **Dependencies** -> **Manage NuGet packages**. 
 
 Search for **Krafs.Rimworld.Ref** and install.__**__.
 
