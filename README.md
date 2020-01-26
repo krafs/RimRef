@@ -11,8 +11,7 @@ Anyone making C# mods for RimWorld.
 
 ### Why use it?
 By removing the need for adding references to actual game files, developers can make their mods self-contained.
-A self-contained mod has everything needed to build it contained within the mod project itself.
-Basically, anyone can clone the git repository of a self-contained mod, open it in her IDE, click Build, and it will work. No need to manually add any references*.
+A self-contained mod has everything needed to build it contained within the mod project itself. This is useful in that you never have to worry about finding your Rimworld assemblies when setting up a new mod project, or when moving an existing project to a different computer.
 
 ### Where can I get it?
 It is available on [nuget.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref).
@@ -20,7 +19,7 @@ Using Visual Studio - Add it to your mod project by right-clicking **Dependencie
 
 Search for **Krafs.Rimworld.Ref** and install.__**__.
 
- -Don't forget to remove the old references to the actual game assemblies!
+ -Don't forget to remove any old references to actual game assemblies!
 
 Published with permission from Ludeon Studios.
 
@@ -28,24 +27,9 @@ Published with permission from Ludeon Studios.
 
 ---
 
-## In-depth
+## Note
+These are not the assembly files from the game. They have been _generated_ from the game, but can not be run. Decompiling these assemblies will show all method bodies as empty. However, modders generally only need to reference the files when compiling code - not when running it.
 
-### What are *reference assemblies*?
-There are two kinds of assemblies: *Implementation assemblies* and *reference assemblies*.
-
-*Implementation assemblies* are simply full, regular assemblies used in applications. 
-
-*Reference assemblies* derive from implementation assemblies, and contain the exact same public metadata, but all actual logic has been removed. All methods are empty. Calling a method in a reference assembly will yield a runtime exception. But the compiler only cares about the metadata, so we can use reference assemblies to build our mods. By default, these assemblies are only referenced during build, and not put into the output directory of the project.
-
-### Why not distribute the *implementation assemblies* instead?
-Firstly, reference assemblies are much smaller in size, which makes the package much lighter.
-
-Secondly, Ludeon Studios has permitted this package to be published - on the condition that the assemblies contain only metadata.
-
----
-
-__*__* Obviously, you could make a mod self-contained by storing the actual game assemblies along with your code. That would yield the exact same result. However, doing so in a publicly accessible repository violates the RimWorld EULA, which explicitly states that "you can't distribute anything we've made unless we agree to it".
-Of course, if you don't keep your code in a public repository this is less of an issue. And all the reasons why you should keep your source code public is the topic for another time :)
 
 __**__ This package is only compatible with projects using PackageReference. It's a different, much better way to organize your NuGet references than packages.config.
 
