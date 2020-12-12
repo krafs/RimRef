@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Krafs.Rimworld.Ref</id>
+	  <version>0</version>
+    <title>RimRef</title>
+    <authors>Ludeon Studios</authors>
+    <owners>krafs</owners>
+    <license type="file">LICENSE.txt</license>
+    <icon>icon.png</icon>
+    <projectUrl>https://github.com/krafs/RimRef</projectUrl>
+    <description>RimWorld reference assemblies. Allows compiling a mod without the actual game files.</description>
+    <copyright>© Krafs 2020</copyright>
+    <tags>Rimworld, Mod</tags>
+  </metadata>
+</package>
