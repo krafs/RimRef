@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Steamworks.NET.Standard.Windows.x64" Version="15.0.1.4" />
-    <PackageReference Include="NuGet.Packaging" Version="5.8.0" />
-    <PackageReference Include="NuGet.Protocol" Version="5.8.0" />
+    <PackageReference Include="NuGet.Packaging" Version="5.8.1" />
+    <PackageReference Include="NuGet.Protocol" Version="5.8.1" />
     <PackageReference Include="dnlib" Version="3.3.2" />
   </ItemGroup>
   
