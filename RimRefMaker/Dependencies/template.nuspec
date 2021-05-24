@@ -9,7 +9,7 @@
 		<license type="file">LICENSE.txt</license>
 		<icon>icon.png</icon>
 		<projectUrl>https://github.com/krafs/RimRef</projectUrl>
-		<description>RimWorld reference assemblies. Allows compiling a mod without the actual game files.</description>
+		<description>RimWorld reference assemblies. Compile mods without the game files.</description>
 		<copyright>© Krafs 2021</copyright>
 		<tags>Rimworld, Mod</tags>
 	</metadata>
