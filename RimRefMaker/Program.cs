@@ -23,81 +23,107 @@ namespace StripAndUploadRimRef
 {
     public class Program
     {
-        private static IConfiguration config;
-
         public static async Task<int> Main()
         {
-            config = new ConfigurationBuilder()
+            IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            bool dryRun = bool.Parse(config["IsDryRun"]);
+            ILog logger;
 
-            Console.WriteLine("Starting");
+            bool isSilent;
+            if (bool.TryParse(config["IsSilent"], out isSilent) && !isSilent)
+            {
+                logger = new Logger();
+            }
+            else
+            {
+                logger = new VoidLogger();
+                isSilent = true;
+            }
+
+            logger.Log("Starting build of Krafs.Rimworld.Ref.");
+            bool isDryRun;
+            if (!bool.TryParse(config["IsDryRun"], out isDryRun))
+            {
+                isDryRun = true;
+            }
+
+            string outputPath = config["OutputFolderPath"];
+            if (isDryRun)
+            {
+                logger.Log($"\nDry-run detected.");
+                logger.Log($"Output path: {outputPath}");
+            }
+            else
+            {
+                logger.Log($"\nDry-run not detected.");
+                logger.Log($"Output: nuget.org");
+            }
+
             string rimWorldFolder = config["RimWorldFolderPath"];
 
             string versionFile = Path.Combine(rimWorldFolder, "Version.txt");
             string rawVersion = File.ReadAllText(versionFile);
 
             string version = rawVersion.Substring(0, rawVersion.IndexOf(' '));
-            if (IsRimWorldUnstableBranch())
+            if (IsRimWorldUnstableBranch(logger))
             {
-                version += config["PreReleaseSuffix"];
+                version += "-beta";
             }
 
-            Console.WriteLine("Established Version: " + version);
+            logger.Log("Resolved package version: " + version);
 
-            using SourceCacheContext cache = new SourceCacheContext();
-            SourceRepository repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
-            FindPackageByIdResource resource = await repository.GetResourceAsync<FindPackageByIdResource>();
-            var nugetVersion = NuGetVersion.Parse(version);
-            string packageId = config["PackageId"];
-            bool versionExists = await resource.DoesPackageExistAsync(packageId, nugetVersion, cache, NullLogger.Instance, CancellationToken.None);
-
-            if (versionExists)
-            {
-                Console.WriteLine($"Version {nugetVersion} exists on nuget.org.");
-                if (!dryRun)
-                {
-                    Console.WriteLine("Terminating program.");
-                    Console.ReadKey();
-                    return 0;
-                }
-                else
-                {
-                    Console.WriteLine("Process is dry-run. Continuing.");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Version {nugetVersion} does not exists on nuget.org. Proceeding with program.");
-            }
-
-            string rimWorldManagedFolderRelative = @"RimWorldWin64_Data\Managed";
+            string rimWorldManagedFolderRelative = Path.Combine("RimWorldWin64_Data", "Managed");
             string dllFolder = Path.Combine(rimWorldFolder, rimWorldManagedFolderRelative);
             string basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
             var nuspecPath = Directory.EnumerateFiles(basePath).FirstOrDefault(file => file.EndsWith(".nuspec"));
             using FileStream nuspecStream = new FileStream(nuspecPath, FileMode.Open);
-            var manifest = Manifest.ReadFrom(nuspecStream, true);
+            Manifest manifest = Manifest.ReadFrom(nuspecStream, true);
             PackageBuilder package = new PackageBuilder();
             package.Populate(manifest.Metadata);
-            package.Version = nugetVersion;
+            package.Version = NuGetVersion.Parse(version);
+
+            if (!isDryRun)
+            {
+                logger.Log("Checking package version on nuget.org.");
+                using SourceCacheContext cache = new SourceCacheContext();
+                SourceRepository repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
+                FindPackageByIdResource resource = await repository.GetResourceAsync<FindPackageByIdResource>();
+                var nugetVersion = NuGetVersion.Parse(version);
+                bool versionExists = await resource.DoesPackageExistAsync(
+                    manifest.Metadata.Id,
+                    nugetVersion,
+                    cache,
+                    NullLogger.Instance,
+                    CancellationToken.None);
+
+                if (versionExists)
+                {
+                    logger.Log("Package version {version} already on nuget.org. Terminating application.");
+                    Console.ReadKey();
+                    return 0;
+                }
+                else
+                {
+                    logger.Log("Package version {version} not found on nuget.org. Proceeding with package build.");
+                }
+            }
 
             NuGetVersion net472TransitionVersion = new NuGetVersion(1, 1, 0);
             string targetFramework = package.Version < net472TransitionVersion ? "net35" : "net472";
 
-            foreach (var managedFile in Directory.EnumerateFiles(dllFolder))
+            logger.Log("\nGenerating reference assemblies...");
+            string[] assemblyPaths = Directory.EnumerateFiles(dllFolder).Where(x => x.EndsWith(".dll")).ToArray();
+            foreach (string managedFile in assemblyPaths)
             {
-                if (managedFile.EndsWith(".dll") is false)
-                {
-                    continue;
-                }
-
                 var bytes = MakeReferenceAssembly(managedFile);
                 var packageFile = new InMemoryFile(bytes, @$"{PackagingConstants.Folders.Ref}\{targetFramework}\{Path.GetFileName(managedFile)}");
                 package.Files.Add(packageFile);
             }
+            logger.Log($"Successfully generated {assemblyPaths.Length} reference assemblies.");
+
             var licenseFileBytes = File.ReadAllBytes(Path.Combine(basePath, package.LicenseMetadata.License));
             var licenseFile = new InMemoryFile(licenseFileBytes, package.LicenseMetadata.License);
             package.Files.Add(licenseFile);
@@ -109,13 +135,12 @@ namespace StripAndUploadRimRef
             using MemoryStream nupkgStream = new MemoryStream();
             package.Save(nupkgStream);
 
-            if (dryRun)
+            if (isDryRun)
             {
-                string outputPath = config["OutputFolderPath"];
                 Directory.CreateDirectory(outputPath);
-                Console.WriteLine("Output folder is: " + outputPath);
                 string filePath = Path.Combine(outputPath, $"{package.Id}.{package.Version}{NuGetConstants.PackageExtension}");
                 await File.WriteAllBytesAsync(filePath, nupkgStream.ToArray());
+                logger.Log($"\nSaved package to disk: {filePath}.");
             }
             else
             {
@@ -130,41 +155,46 @@ namespace StripAndUploadRimRef
                 nupkgStream.Position = 0;
                 StreamContent streamContent = new StreamContent(nupkgStream);
                 streamContent.Headers.ContentType = new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Octet);
-                content.Add(streamContent, "package", "package.nupkg"); // Can these strings be removed?
+                content.Add(streamContent, "package", "package.nupkg");
                 request.Content = content;
-                var response = await httpClient.SendAsync(request);
-
-                Console.WriteLine(response.StatusCode + " : " + response.ReasonPhrase);
-            }
-
-            Console.WriteLine($"Done.");
-            Console.ReadKey(); // Remove if silent
-            return 0;
-        }
-
-        private static bool IsRimWorldUnstableBranch()
-        {
-            string steamAppId = config["SteamAppId"];
-            Environment.SetEnvironmentVariable("SteamAppId", steamAppId);
-            try
-            {
-                if (SteamAPI.Init())
+                HttpResponseMessage response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Successfully initialized.");
-
-                    return SteamApps.GetCurrentBetaName(out string _, 100);
+                    logger.Log($"\nSuccessfully uploaded package to nuget.org.");
                 }
                 else
                 {
-                    Console.WriteLine("Steam API failed to initialize.");
-                    throw new Exception();
+                    logger.Log($"\nSomething went wrong uploading package to nuget.org:");
+                    logger.Log(response.StatusCode + ": " + response.ReasonPhrase);
                 }
             }
-            catch (Exception e)
+
+            logger.Log($"\nDone. Press any key to exit.");
+            if (!isSilent)
             {
-                Console.WriteLine("Error: ");
-                Console.Write(e.Message);
-                throw;
+                Console.ReadKey();
+            }
+            return 0;
+        }
+
+        private static bool IsRimWorldUnstableBranch(ILog logger)
+        {
+            string steamAppId = "294100";
+            Environment.SetEnvironmentVariable("SteamAppId", steamAppId);
+            try
+            {
+                logger.Log("\nInitializing Steam connection for Rimworld branch detection.");
+                if (SteamAPI.Init())
+                {
+                    bool isBetaBranch = SteamApps.GetCurrentBetaName(out string _, 100);
+
+                    logger.Log($"\nIs beta branch: {isBetaBranch}");
+                    return isBetaBranch;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unable to initialize Steam connection to resolve Rimworld branch.");
+                }
             }
             finally
             {
