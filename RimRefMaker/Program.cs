@@ -101,13 +101,13 @@ namespace StripAndUploadRimRef
 
                 if (versionExists)
                 {
-                    logger.Log("Package version {version} already on nuget.org. Terminating application.");
+                    logger.Log($"Package version {version} already on nuget.org. Terminating application.");
                     Console.ReadKey();
                     return 0;
                 }
                 else
                 {
-                    logger.Log("Package version {version} not found on nuget.org. Proceeding with package build.");
+                    logger.Log($"Package version {version} not found on nuget.org. Proceeding with package build.");
                 }
             }
 
