@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package>
+  <metadata>
+    <id>Krafs.Rimworld.Ref</id>
+    <version>0</version>
+    <title>RimRef</title>
+    <authors>krafs, Ludeon Studios</authors>
+    <description>RimWorld reference assemblies. Compile mods without referencing the game.</description>
+    <tags>Rimworld, Mod</tags>
+    <readme>README.md</readme>
+    <license type="file">LICENSE.md</license>
+    <copyright>Ludeon Studios (c) $year$</copyright>
+    <icon>icon.png</icon>
+    <projectUrl>https://github.com/krafs/RimRef</projectUrl>
+  </metadata>
+</package>

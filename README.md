@@ -1,32 +1,33 @@
-# RimRef
+# RimRef <a href="https://www.nuget.org/packages/Krafs.Rimworld.Ref"><img alt="Version" src="https://img.shields.io/nuget/vpre/Krafs.Rimworld.Ref?label=Latest"></a>  <a href="https://www.nuget.org/packages/Krafs.Rimworld.Ref"><img alt="Downloads" src="https://img.shields.io/nuget/dt/Krafs.Rimworld.Ref?label=Downloads"></a>
 
-### What is this?
-RimRef is a NuGet package containing Reference Assemblies* for all managed C# assemblies in RimWorld.
+RimRef is a NuGet-package that contains reference assemblies for Rimworld. You reference it in your mod project instead of the game.
 
-### What does it do?
-It allows for compiling RimWorld mods without the game assemblies.
+This makes your project portable, because RimRef can be downloaded by anyone and used from anywhere, unlike Rimworld's assemblies which can't be distributed.
 
-### Who is it for?
-Anyone making C# mods for RimWorld.
+## Installation
+Install RimRef (Krafs.Rimworld.Ref) from your IDE's package manager, or with [dotnet](https://docs.microsoft.com/en-us/dotnet/core/install):
 
-### Why use it?
-By removing the need for adding references to actual game files, developers can make their mods self-contained.
-A self-contained mod has everything needed to build it contained within the mod project itself. This is convenient, but can also be particularly useful when collaborating on mods with other people, as everyone can just all download the source code, click Build, and it will compile. No need having to setup the solution with their own dependencies.
+```shell
+dotnet add package Krafs.Rimworld.Ref
+```
 
-### Where can I get it?
-It is available on [nuget.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref).
-Using Visual Studio - Add it to your mod project by right-clicking **Dependencies** -> **Manage NuGet packages**. 
+## FAQ
+### - Why do I get an error when trying to build with RimRef?
+Likely because you are adding it to a project that uses an [old package structure](https://docs.microsoft.com/en-us/nuget/reference/packages-config). Fear not! It is easy to fix. Do one of the following:
+- [Migrate](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference) your existing project
+- Create a new project library for **.NET 5 or later**, and replace the `<TargetFramework>`-value in the project file with `net472`.
 
-Search for **Krafs.Rimworld.Ref** and install.__**__.
+### - What are 'reference assemblies'?
+Reference assemblies are ordinary assemblies from which all code has been stripped, leaving only their signatures. However, these signatures are all the compiler needs to build your project. Not only does this speed up the build process, it more importantly offers a way to reference Rimworld from anywhere without illegally distributing any of its content.
 
+### - How is this package made?
+It is automatically generated everytime Rimworld updates. See [this script](https://github.com/krafs/RimRef/blob/main/.github/workflows/make-and-upload-package.yml) for details.
+
+In short, the script downloads the Rimworld assemblies from Steam every day, and checks if the game's version has changed. If it has, the new reference assemblies are generated and uploaded in a package to [NuGet.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref "Krafs.Rimworld.Ref").
+
+RimRef's version mirrors Rimworld's version, meaning RimRef version `v1.2.3` contains reference assemblies for Rimworld version `v1.2.3`.
+
+The script also generates pre-releases from some Steam beta-branches, in which case `-beta` is appended to the version, e.g. `v1.2.3-beta`.
 
 ---
-
-### * Reference Assemblies
-
-These are reference assemblies. That means that all methods in the assemblies have been stripped of code, leaving only their signatures. However, the signatures are all the compiler needs to build your mod. One of the most common reasons this is used in development in general is to make the NuGet packages smaller - making downloads of big packages faster, and take up less space. In the case of Rimworld it more importantly allows us to distribute "Rimworld's game files" without actually leaking the source code. Well, except the signatures, but that ended up being an ok compromise.
-
 Published with permission from Ludeon Studios.
-
-__**__ This package is only compatible with projects using PackageReference. 
-By default when you create a new .NET472-project for a Rimworld mod, you are given a project set up for the old packages.config-structure. Trying to reference krafs.rimworld.ref in a project that uses packages.config usually causes an error message. To fix this you need to migrate to using PackageReferences for the project. It is very easy. See [this guide](https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
