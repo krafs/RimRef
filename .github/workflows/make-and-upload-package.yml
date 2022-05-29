@@ -1,0 +1,136 @@
+name: Generate package
+
+on:
+# How often this script runs.
+  schedule:
+    - cron: '0 0,12 * * *'  # every day at midnight and noon (UTC)
+
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - README.md
+      - LICENSE.md
+      
+  pull_request:
+    paths-ignore: 
+      - README.md
+      - LICENSE.md
+
+# Allows manually triggering this script.
+  workflow_dispatch:
+    inputs:
+      upload-to-nuget:
+        description: 'Upload to NuGet.org'
+        type: boolean
+
+env:
+  # The commit hash of DepotDownloader to download and use in this script.
+  DEPOT_DOWNLOADER_COMMIT: 72683ef
+  RIMWORLD_APP_ID: 294100
+  # Id of the logical set of files from which to download the Rimworld assemblies.
+  RIMWORLD_DEPOT_ID: 294104
+
+jobs:
+  generate-package:
+    name: Generate package
+    strategy:
+      # Ensures that only one branch is checked at a time.
+      max-parallel: 1
+      matrix:
+        # We check the following beta branches on Steam for updates.
+        branch: [public, unstable]
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+        env:
+          DOTNET_NOLOGO: true
+          DOTNET_CLI_TELEMETRY_OPTOUT: true
+          
+      - name: Set up NuGet
+        uses: NuGet/setup-nuget@v1.0.6
+        with:
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          
+        # DepotDownloader is retrieved from cache, if possible.
+      - name: Try set up DepotDownloader from cache
+        id: cache-depot-downloader
+        uses: actions/cache@v3.0.2
+        with:
+          path: /usr/local/bin/depot-downloader
+          key: depot-downloader-${{ env.DEPOT_DOWNLOADER_COMMIT }}
+          
+        # Installs DepotDownloader, unless it's available in the cache since a previous run.
+      - name: Set up DepotDownloader
+        run: |
+          sudo git clone --no-checkout https://github.com/SteamRE/DepotDownloader.git .
+          sudo git -c advice.detachedHead=false checkout ${{ env.DEPOT_DOWNLOADER_COMMIT }}
+          sudo dotnet publish \
+            --configuration Release \
+            --output /usr/local/bin \
+            --runtime linux-x64 \
+            --self-contained \
+            /p:DebugType=embedded \
+            /p:PublishReadyToRun=true \
+            /p:PublishSingleFile=true \
+            /p:AssemblyName=depot-downloader
+        working-directory: /usr/local/src
+        if: steps.cache-depot-downloader.outputs.cache-hit != 'true'
+        
+      - name: Set up Refasmer
+        run: dotnet tool install --global JetBrains.Refasmer.CliTool --version 1.0.30
+
+        # Specifically downloads the Version.txt and managed assemblies for Rimworld.
+      - name: Download Rimworld
+        run: |
+          filelist="$(mktemp)"
+          echo "Version.txt" > $filelist
+          echo "regex:^RimWorldWin64_Data\/Managed\/.*dll$" >> $filelist
+          echo "Downloading Version.txt and all managed assemblies of Rimworld from Steam"
+          depot-downloader \
+            -app ${{ env.RIMWORLD_APP_ID }} \
+            -depot ${{ env.RIMWORLD_DEPOT_ID }} \
+            -filelist $filelist \
+            -beta ${{ matrix.branch }} \
+            -username ${{ secrets.STEAM_USERNAME }} \
+            -password ${{ secrets.STEAM_PASSWORD }} \
+            -dir ${{ github.workspace }}
+        
+      - name: Generate reference assemblies
+        run: refasmer -v --all -O ${{ github.workspace }}/package/ref/net472 $(ls) 
+        working-directory: ./RimWorldWin64_Data/Managed
+        
+        # Resolves the version of the package from Rimworld's Version.txt, and appends '-beta' if from a beta-branch.
+        # Packs the package.
+      - name: Assemble NuGet package
+        run: |
+          version="$(cat ${{ github.workspace }}/Version.txt | cut -d' ' -f1)"
+          if [ ${{ matrix.branch }} != public ]; then
+            version=$version-beta
+          fi
+          echo "Rimworld version: $version"
+          year=$(date '+%Y')
+          nuget pack -Version $version -Properties year=$year -NoPackageAnalysis
+        working-directory: ./package
+
+        # Uploads the package as a GitHub artifact.
+      - name: Upload GitHub artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          path: ./package/Krafs.Rimworld.Ref.*.nupkg
+          retention-days: 7
+
+        # Uploads the package to NuGet.org.
+        # '-SkipDuplicate' means that the workflow won't be marked as failed if the version of the package already exists.
+      - name: Upload to NuGet.org
+        run: nuget push *.nupkg -Source https://api.nuget.org/v3/index.json -SkipDuplicate
+        working-directory: ./package
+        if: github.event_name == 'schedule' || github.event.inputs.upload-to-nuget == 'true'
