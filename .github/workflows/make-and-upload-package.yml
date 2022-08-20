@@ -5,18 +5,6 @@ on:
   schedule:
     - cron: '0 0,12 * * *'  # every day at midnight and noon (UTC)
 
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - README.md
-      - LICENSE.md
-      
-  pull_request:
-    paths-ignore: 
-      - README.md
-      - LICENSE.md
-
 # Allows manually triggering this script.
   workflow_dispatch:
     inputs:
