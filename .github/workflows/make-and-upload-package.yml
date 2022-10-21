@@ -111,7 +111,7 @@ jobs:
 
         # Uploads the package as a GitHub artifact.
       - name: Upload GitHub artifact
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v3.1.1
         with:
           path: ./package/Krafs.Rimworld.Ref.*.nupkg
           retention-days: 7
