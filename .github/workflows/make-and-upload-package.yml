@@ -62,6 +62,7 @@ jobs:
           sudo git clone --no-checkout https://github.com/SteamRE/DepotDownloader.git .
           sudo git -c advice.detachedHead=false checkout ${{ env.DEPOT_DOWNLOADER_COMMIT }}
           sudo dotnet publish \
+            DepotDownloader/DepotDownloader.csproj
             --configuration Release \
             --output /usr/local/bin \
             --runtime linux-x64 \
