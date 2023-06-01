@@ -45,7 +45,7 @@ jobs:
         run: dotnet tool install --global JetBrains.Refasmer.CliTool --version 1.0.33
       
       - name: Download Rimworld
-        run: steamcmd +login ${{ secrets.STEAM_USERNAME }} ${{ secrets.STEAM_PASSWORD }} +app_update ${{ env.RIMWORLD_APP_ID }} +quit
+        run: steamcmd +login ${{ secrets.STEAM_USERNAME }} ${{ secrets.STEAM_PASSWORD }} +app_update ${{ env.RIMWORLD_APP_ID }} -beta ${{ matrix.branch }} +quit
 
       - name: Generate reference assemblies
         run: refasmer -v --all -O ${{ github.workspace }}\package\ref\net472 $(Get-ChildItem -Name)
