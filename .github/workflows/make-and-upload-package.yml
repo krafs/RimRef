@@ -14,7 +14,7 @@ on:
 
 env:
   # The commit hash of DepotDownloader to download and use in this script.
-  DEPOT_DOWNLOADER_COMMIT: 4c52ad3a4c608612c28fd186884815fad103694d
+  DEPOT_DOWNLOADER_COMMIT: 9d2446404ae5ae55f94b99a380ece8bdb6942b93
   RIMWORLD_APP_ID: 294100
   # Id of the logical set of files from which to download the Rimworld assemblies.
   RIMWORLD_DEPOT_ID: 294104
