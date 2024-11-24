@@ -77,7 +77,7 @@ jobs:
         if: steps.cache-depot-downloader.outputs.cache-hit != 'true'
         
       - name: Set up Refasmer
-        run: dotnet tool install --global JetBrains.Refasmer.CliTool --version 1.0.33
+        run: dotnet tool install --global JetBrains.Refasmer.CliTool --version 2.0.0
 
         # Specifically downloads the Version.txt and managed assemblies for Rimworld.
       - name: Download Rimworld
