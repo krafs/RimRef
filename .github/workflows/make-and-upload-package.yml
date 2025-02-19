@@ -53,7 +53,7 @@ jobs:
         # DepotDownloader is retrieved from cache, if possible.
       - name: Try set up DepotDownloader from cache
         id: cache-depot-downloader
-        uses: actions/cache@v4.2.0
+        uses: actions/cache@v4.2.1
         with:
           path: /usr/local/bin/depot-downloader
           key: depot-downloader-${{ env.DEPOT_DOWNLOADER_COMMIT }}
