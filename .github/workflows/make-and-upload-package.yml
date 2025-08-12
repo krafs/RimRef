@@ -35,7 +35,7 @@ jobs:
     steps:
 
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up dotnet
         uses: actions/setup-dotnet@v4.3.1
