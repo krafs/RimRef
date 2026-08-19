@@ -46,7 +46,7 @@ jobs:
           DOTNET_CLI_TELEMETRY_OPTOUT: true
           
       - name: Set up NuGet
-        uses: NuGet/setup-nuget@v3.1.0
+        uses: NuGet/setup-nuget@v4
         with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
           
