@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Builds a minimal mod against a generated package. Pass SmokeTargetFramework, RimRefVersion and RestoreAdditionalProjectSources. Defaults to the latest published package. -->
+  <PropertyGroup>
+    <SmokeTargetFramework Condition="'$(SmokeTargetFramework)' == ''">net10.0</SmokeTargetFramework>
+    <TargetFramework>$(SmokeTargetFramework)</TargetFramework>
+    <RimRefVersion Condition="'$(RimRefVersion)' == ''">*-*</RimRefVersion>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="$(RimRefVersion)" />
+  </ItemGroup>
+
+</Project>

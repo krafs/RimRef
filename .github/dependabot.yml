@@ -8,3 +8,12 @@ updates:
       - "krafs"
     labels:
       - "enhancement"
+
+  - package-ecosystem: "nuget"
+    directory: "/src/RimRef.Generator"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "krafs"
+    labels:
+      - "enhancement"
