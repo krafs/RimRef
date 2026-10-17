@@ -16,14 +16,14 @@ internal sealed partial record Game(string Version, NuGetFramework TargetFramewo
         var isUnity = Directory.Exists(managedDir);
         var isDotNet = File.Exists(runtimeConfigPath);
 
-        if (isUnity)
-        {
-            return LoadUnity(version, managedDir);
-        }
-
         if (isDotNet)
         {
             return LoadDotNet(version, gameDir, runtimeConfigPath);
+        }
+
+        if (isUnity)
+        {
+            return LoadUnity(version, managedDir);
         }
 
         throw new GeneratorException($"Unrecognized game layout in {gameDir}.");
