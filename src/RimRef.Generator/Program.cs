@@ -18,16 +18,22 @@ try
 
     var packageVersion = isUnstable ? $"{game.Version}-unstable" : game.Version;
 
-    var files = new List<PackageAssembly>();
+    var files = new List<PackageFile>();
     foreach (var assemblyPath in game.Assemblies)
     {
         var bytes = ReferenceAssembly.Create(assemblyPath);
         var fileName = Path.GetFileName(assemblyPath);
-        var file = new PackageAssembly(fileName, bytes);
+        var file = new PackageFile($"ref/{targetFramework}/{fileName}", bytes);
         files.Add(file);
     }
 
     Console.WriteLine($"Generated {game.Assemblies.Count} reference assemblies");
+
+    if (game.RunsOnWaylithClr)
+    {
+        var waylithClrFiles = WaylithClr.CreateFiles(gameDir);
+        files.AddRange(waylithClrFiles);
+    }
 
     var packagePath = Package.Write(outputDir, packageVersion, game.TargetFramework, files);
     Console.WriteLine($"Created {packagePath}");

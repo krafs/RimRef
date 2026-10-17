@@ -85,11 +85,12 @@ jobs:
         id: generate
         run: dotnet run --project src/RimRef.Generator --configuration Release -- "$RUNNER_TEMP/rimworld" "${{ github.workspace }}/artifacts" ${{ matrix.branch != 'public' && '--unstable' || '' }}
 
-        # Builds a minimal mod against the generated package.
+        # Builds a minimal mod against the generated package, using WaylithClr's APIs from RimWorld 1.7.
       - name: Test package
         run: |
           dotnet build tests/Smoke \
             -p:SmokeTargetFramework=${{ steps.generate.outputs.target-framework }} \
+            -p:SmokeWaylithClr=${{ steps.generate.outputs.target-framework == 'net10.0' }} \
             -p:RimRefVersion=${{ steps.generate.outputs.version }} \
             -p:RestoreAdditionalProjectSources="${{ github.workspace }}/artifacts"
 

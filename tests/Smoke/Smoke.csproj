@@ -6,6 +6,8 @@
     <TargetFramework>$(SmokeTargetFramework)</TargetFramework>
     <RimRefVersion Condition="'$(RimRefVersion)' == ''">*-*</RimRefVersion>
     <LangVersion>latest</LangVersion>
+    <!-- Set SmokeWaylithClr to true to also use WaylithClr's APIs, which RimRef for RimWorld 1.7 and later contains. -->
+    <DefineConstants Condition="'$(SmokeWaylithClr)' == 'true'">$(DefineConstants);WAYLITHCLR</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

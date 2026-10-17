@@ -6,7 +6,7 @@ using NuGet.Frameworks;
 
 namespace RimRef.Generator;
 
-internal sealed partial record Game(string Version, NuGetFramework TargetFramework, IReadOnlyCollection<string> Assemblies)
+internal sealed partial record Game(string Version, NuGetFramework TargetFramework, IReadOnlyCollection<string> Assemblies, bool RunsOnWaylithClr)
 {
     public static Game Load(string gameDir)
     {
@@ -51,7 +51,7 @@ internal sealed partial record Game(string Version, NuGetFramework TargetFramewo
     {
         var assemblies = Directory.GetFiles(managedDir, "*.dll");
         var targetFramework = ReadUnityTargetFramework(managedDir);
-        return new Game(version, targetFramework, assemblies);
+        return new Game(version, targetFramework, assemblies, false);
     }
 
     private static NuGetFramework ReadUnityTargetFramework(string managedDir)
@@ -79,7 +79,7 @@ internal sealed partial record Game(string Version, NuGetFramework TargetFramewo
 
         var targetFramework = NuGetFramework.Parse(tfm);
         var assemblies = ReadGameAssemblies(gameDir);
-        return new Game(version, targetFramework, assemblies);
+        return new Game(version, targetFramework, assemblies, true);
     }
 
     // Everything the game ships except its build of .NET itself, which mods get from the .NET SDK.

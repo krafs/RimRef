@@ -4,7 +4,7 @@ using NuGet.Versioning;
 
 namespace RimRef.Generator;
 
-internal sealed record PackageAssembly(string FileName, byte[] Content);
+internal sealed record PackageFile(string TargetPath, byte[] Content);
 
 internal static class Package
 {
@@ -12,7 +12,14 @@ internal static class Package
 
     private static readonly string[] MetadataFiles = ["README.md", "LICENSE.md", "icon.png"];
 
-    public static string Write(string outputDir, string version, NuGetFramework targetFramework, IReadOnlyList<PackageAssembly> assemblies)
+    public static PackageFile ReadTemplate(string fileName, string targetPath)
+    {
+        var path = Path.Combine(TemplateDir, fileName);
+        var content = File.ReadAllBytes(path);
+        return new PackageFile(targetPath, content);
+    }
+
+    public static string Write(string outputDir, string version, NuGetFramework targetFramework, IReadOnlyList<PackageFile> files)
     {
         var year = DateTime.UtcNow.Year;
         var builder = new PackageBuilder
@@ -45,15 +52,14 @@ internal static class Package
             builder.Files.Add(file);
         }
 
-        var folder = targetFramework.GetShortFolderName();
-        foreach (var assembly in assemblies)
+        foreach (var file in files)
         {
-            var content = new MemoryStream(assembly.Content);
-            var file = new PhysicalPackageFile(content)
+            var content = new MemoryStream(file.Content);
+            var packageFile = new PhysicalPackageFile(content)
             {
-                TargetPath = $"ref/{folder}/{assembly.FileName}",
+                TargetPath = file.TargetPath,
             };
-            builder.Files.Add(file);
+            builder.Files.Add(packageFile);
         }
 
         using var package = new MemoryStream();

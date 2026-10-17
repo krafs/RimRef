@@ -5,10 +5,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <MicrosoftNETCoreAppRefVersion>10.0.13</MicrosoftNETCoreAppRefVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Refasmer" Version="2.0.3" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.6" />
     <PackageReference Include="NuGet.Packaging" Version="7.9.0" />
     <!-- Overrides the vulnerable version that NuGet.Packaging depends on. -->
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
@@ -17,5 +19,21 @@
   <ItemGroup>
     <None Include="..\..\package\**" LinkBase="package" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <!-- The official .NET reference assemblies that WaylithClr's APIs are added to, from the .NET version the game's runtime is built on. -->
+  <PropertyGroup>
+    <MicrosoftNETCoreAppRefDir>$([MSBuild]::EnsureTrailingSlash('$(NuGetPackageRoot)'))microsoft.netcore.app.ref/$(MicrosoftNETCoreAppRefVersion)/</MicrosoftNETCoreAppRefDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[$(MicrosoftNETCoreAppRefVersion)]" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NuGetPackageRoot)' != ''">
+    <None Include="$(MicrosoftNETCoreAppRefDir)ref/net10.0/System.Runtime.dll" LinkBase="sdk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(MicrosoftNETCoreAppRefDir)ref/net10.0/System.Runtime.xml" LinkBase="sdk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(MicrosoftNETCoreAppRefDir)ref/net10.0/System.Runtime.Intrinsics.dll" LinkBase="sdk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(MicrosoftNETCoreAppRefDir)ref/net10.0/System.Runtime.Intrinsics.xml" LinkBase="sdk" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(MicrosoftNETCoreAppRefDir)LICENSE.TXT" LinkBase="sdk" CopyToOutputDirectory="PreserveNewest" />  </ItemGroup>
 
 </Project>

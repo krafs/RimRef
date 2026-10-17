@@ -37,7 +37,16 @@ To always get the latest build of a game version, use a wildcard such as `1.6.*`
 ## What's included
 RimRef contains every managed assembly the game ships, including private members, so [publicizers](https://github.com/krafs/Publicizer) work with it.
 
-From RimWorld 1.7, .NET itself is not included. Your project gets it from the .NET SDK, like any other .NET project. RimWorld runs on Ludeon's own build of .NET, and the few APIs it adds aren't included.
+From RimWorld 1.7, .NET itself is not included. Your project gets it from the .NET SDK, like any other .NET project.
+
+### Ludeon's .NET APIs
+RimWorld 1.7 runs on Ludeon's own build of .NET, which adds a few APIs, such as the `WaylithClr` namespace. RimRef includes them, so you can use them like any other .NET API.
+
+To leave them out, add `<RimRefWaylithClr>false</RimRefWaylithClr>` to your project file.
+
+## Troubleshooting
+### CS7069: Reference to type '...' claims it is defined in 'System.Runtime', but it could not be found
+A library you reference uses [Ludeon's .NET APIs](#ludeons-net-apis), but your project doesn't include them. Make sure your project references RimRef for RimWorld 1.7 itself, without `IncludeAssets="compile"`, and doesn't set `RimRefWaylithClr` to `false`.
 
 ## How it's made
 A [workflow](https://github.com/krafs/RimRef/blob/main/.github/workflows/make-and-upload-package.yml) downloads RimWorld from Steam twice a day, and the [generator](https://github.com/krafs/RimRef/tree/main/src/RimRef.Generator) turns its assemblies into a package. If that version isn't on [NuGet.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref) yet, it's uploaded.

@@ -1,0 +1,11 @@
+<Project>
+  <!-- Swaps the official System.Runtime and System.Runtime.Intrinsics for copies that also contain WaylithClr's APIs. Set RimRefWaylithClr to false to opt out. -->
+  <Target Name="RimRefUseWaylithClr" AfterTargets="ResolveTargetingPackAssets" Condition="'$(RimRefWaylithClr)' != 'false' and '$(TargetFrameworkVersion)' == 'v10.0'">
+    <ItemGroup>
+      <_RimRefOfficial Include="@(Reference->WithMetadataValue('FrameworkReferenceName', 'Microsoft.NETCore.App'))" />
+      <_RimRefSwapped Include="@(_RimRefOfficial->WithMetadataValue('Filename', 'System.Runtime'));@(_RimRefOfficial->WithMetadataValue('Filename', 'System.Runtime.Intrinsics'))" />
+      <Reference Remove="@(_RimRefSwapped)" />
+      <Reference Include="@(_RimRefSwapped->'$(MSBuildThisFileDirectory)../../waylithclr/net10.0/%(Filename)%(Extension)')" />
+    </ItemGroup>
+  </Target>
+</Project>
