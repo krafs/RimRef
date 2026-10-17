@@ -3,12 +3,8 @@ using Verse;
 
 namespace Smoke;
 
-public class SmokeMod : Mod
+public class SmokeMod(ModContentPack content) : Mod(content)
 {
-    public SmokeMod(ModContentPack content) : base(content)
-    {
-    }
-
     public override void DoSettingsWindowContents(Rect inRect)
     {
         Widgets.Label(inRect, "Smoke");

@@ -34,7 +34,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        # We check the following beta branches on Steam for updates.
+        # We check the following branches on Steam for updates.
         branch:
         - public
         - unstable
@@ -79,11 +79,11 @@ jobs:
           STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
           STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
 
-        # Generates the reference assemblies and packs them, appending '-beta' to the version if from a beta-branch.
+        # Generates the reference assemblies and packs them, appending '-unstable' to the version if not from the public branch.
         # Fails on game layouts or target frameworks it doesn't recognize.
       - name: Generate package
         id: generate
-        run: dotnet run --project src/RimRef.Generator --configuration Release -- "$RUNNER_TEMP/rimworld" "${{ github.workspace }}/artifacts" ${{ matrix.branch != 'public' && '--beta' || '' }}
+        run: dotnet run --project src/RimRef.Generator --configuration Release -- "$RUNNER_TEMP/rimworld" "${{ github.workspace }}/artifacts" ${{ matrix.branch != 'public' && '--unstable' || '' }}
 
         # Builds a minimal mod against the generated package.
       - name: Test package

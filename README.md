@@ -23,45 +23,21 @@ Reference RimRef in your mod's project file, and target the framework of the Rim
 
 | RimWorld | Target framework |
 |---|---|
-| 1.7 and later | `net10.0` |
-| 1.1 to 1.6 | `net472` or `net48` |
-| 1.0 and earlier | `net35` |
+| 1.7 | `net10.0` |
+| 1.1 - 1.6 | `net472` |
+| 1.0 | `net35` |
 
 ## Versions
 RimRef's version is the game's version: RimRef `1.6.4871` contains the reference assemblies of RimWorld `1.6.4871`.
 
-Versions built from Steam beta branches end in `-beta`, such as `1.7.4977-beta`. They are prereleases, so your IDE or `dotnet add package` only shows them when you include prereleases.
+Versions built from the game's unstable branch on Steam end in `-unstable`, such as `1.7.4981-unstable`. They are prereleases, so your IDE or `dotnet add package` only shows them when you include prereleases.
 
 To always get the latest build of a game version, use a wildcard such as `1.6.*`, or `1.7.*-*` to include prereleases.
-
-## Supporting several RimWorld versions
-Build one project for several game versions by multi-targeting, and pick a RimRef version per target framework:
-
-```xml
-<PropertyGroup>
-  <TargetFrameworks>net472;net10.0</TargetFrameworks>
-</PropertyGroup>
-
-<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-  <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*" />
-</ItemGroup>
-
-<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-  <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.*-*" />
-</ItemGroup>
-```
 
 ## What's included
 RimRef contains every managed assembly the game ships, including private members, so [publicizers](https://github.com/krafs/Publicizer) work with it.
 
-From RimWorld 1.7, .NET itself is not included. Your project gets it from the .NET SDK, like any other .NET project. RimWorld runs on Ludeon's own build of .NET, and the few APIs it adds can't be compiled against.
-
-## Troubleshooting
-### NU1202: Package Krafs.Rimworld.Ref is not compatible with...
-Your project's target framework doesn't match the RimWorld version of the RimRef version you reference. See the table in [Getting started](#getting-started).
-
-### RimRef fails to install, or my project can't find RimWorld's types
-Your project likely uses [packages.config](https://learn.microsoft.com/en-us/nuget/reference/packages-config), which doesn't support reference assemblies. [Migrate it to PackageReference](https://learn.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference).
+From RimWorld 1.7, .NET itself is not included. Your project gets it from the .NET SDK, like any other .NET project. RimWorld runs on Ludeon's own build of .NET, and the few APIs it adds aren't included.
 
 ## How it's made
 A [workflow](https://github.com/krafs/RimRef/blob/main/.github/workflows/make-and-upload-package.yml) downloads RimWorld from Steam twice a day, and the [generator](https://github.com/krafs/RimRef/tree/main/src/RimRef.Generator) turns its assemblies into a package. If that version isn't on [NuGet.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref) yet, it's uploaded.
