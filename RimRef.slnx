@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/RimRef.Generator/RimRef.Generator.csproj" />
+  <Project Path="tests/Smoke/Smoke.csproj" />
+</Solution>
