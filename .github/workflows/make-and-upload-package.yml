@@ -95,7 +95,7 @@ jobs:
 
         # Uploads the package as a GitHub artifact.
       - name: Upload GitHub artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: krafs.rimworld.ref-${{ matrix.branch }}.nupkg
           path: ${{ steps.generate.outputs.package }}
