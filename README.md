@@ -27,20 +27,24 @@ Reference RimRef in your mod's project file, and target the framework of the Rim
 | 1.1 - 1.6 | `net472` |
 | 1.0 | `net35` |
 
-## Versions
-RimRef's version is the game's version: RimRef `1.6.4871` contains the reference assemblies of RimWorld `1.6.4871`.
+## Versioning
+RimRef's version mirrors the game's version: RimRef `1.6.4871` contains the reference assemblies of RimWorld `1.6.4871`.
 
-Versions built from the game's unstable branch on Steam end in `-unstable`, such as `1.7.4981-unstable`. They are prereleases, so your IDE or `dotnet add package` only shows them when you include prereleases.
+Versions built from the game's unstable branch on Steam end in `-unstable`, such as `1.7.4981-unstable`. They are prereleases, so your package manager only shows them when you include prereleases.
 
-To always get the latest build of a game version, use a wildcard such as `1.6.*`, or `1.7.*-*` to include prereleases.
+If RimRef itself needs a fix, the same game version gets a number at the end: `1.7.4981.1`, or `1.7.4981-unstable.1` for prereleases.
+
+To always use the latest build of a game version, use a wildcard such as `1.6.*`, or `1.7.*-*` to include prereleases.
 
 ## What's included
-RimRef contains every managed assembly the game ships, including private members, so [publicizers](https://github.com/krafs/Publicizer) work with it.
+RimRef contains the game's managed assemblies, including private members, so [publicizers](https://github.com/krafs/Publicizer) work with them.
 
-From RimWorld 1.7, .NET itself is not included. Your project gets it from the .NET SDK, like any other .NET project. RimWorld runs on Ludeon's own build of .NET, and the few APIs it adds aren't included.
+Up to RimWorld 1.6, that includes the game's own .NET assemblies. From 1.7, .NET is not included: your project gets it from the .NET SDK, like any other .NET project.
+
+The SDK lacks two things the game's .NET has: private members, so .NET types can't be publicized, and the APIs Ludeon adds in its own build of .NET, such as the `WaylithClr` namespace. Reach either through reflection or [`UnsafeAccessor`](https://learn.microsoft.com/dotnet/api/system.runtime.compilerservices.unsafeaccessorattribute). More on why in [RimWorld 1.7 and .NET](https://github.com/krafs/RimRef/discussions/108).
 
 ## How it's made
-A [workflow](https://github.com/krafs/RimRef/blob/main/.github/workflows/make-and-upload-package.yml) downloads RimWorld from Steam twice a day, and the [generator](https://github.com/krafs/RimRef/tree/main/src/RimRef.Generator) turns its assemblies into a package. If that version isn't on [NuGet.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref) yet, it's uploaded.
+A [workflow](https://github.com/krafs/RimRef/blob/main/.github/workflows/make-and-upload-package.yml) downloads RimWorld from Steam twice a day, and turns its assemblies into a package. If that version isn't on [NuGet.org](https://www.nuget.org/packages/Krafs.Rimworld.Ref) yet, it's uploaded.
 
 ---
 Published with permission from Ludeon Studios.
