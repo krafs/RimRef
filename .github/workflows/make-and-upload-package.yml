@@ -40,6 +40,10 @@ jobs:
         - unstable
 
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      # Lets NuGet/login request an OIDC token for trusted publishing.
+      id-token: write
     steps:
 
       - name: Check out repository
@@ -101,10 +105,18 @@ jobs:
           path: ${{ steps.generate.outputs.package }}
           retention-days: 7
 
+        # Exchanges the workflow's OIDC token for a short-lived NuGet.org API key, using the trusted publishing policy on NuGet.org.
+      - name: Log in to NuGet.org
+        id: nuget-login
+        uses: NuGet/login@v1.2.0
+        with:
+          user: krafs
+        if: github.event_name == 'schedule' || inputs.upload-to-nuget
+
         # Uploads the package to NuGet.org.
         # '--skip-duplicate' means that the workflow won't be marked as failed if the version of the package already exists.
       - name: Upload to NuGet.org
         run: dotnet nuget push "${{ steps.generate.outputs.package }}" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         if: github.event_name == 'schedule' || inputs.upload-to-nuget
