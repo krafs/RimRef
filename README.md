@@ -2,7 +2,7 @@
 
 RimRef is a NuGet package of reference assemblies for RimWorld. Reference it in your mod project instead of the game's own assemblies, and your mod builds anywhere: on another machine, in CI, or without RimWorld installed.
 
-Reference assemblies contain only the game's signatures, not its code. That's all the compiler needs, and it's what lets RimRef be distributed when the game can't be.
+Reference assemblies contain only the game's signatures, not its code. That's all the compiler needs, and it's what lets RimRef be distributed when the game can't be. To see the game's code in your IDE, use [RimRef Local](https://github.com/krafs/RimRefLocal).
 
 ## Getting started
 Reference RimRef in your mod's project file, and target the framework of the RimWorld version you build for:
