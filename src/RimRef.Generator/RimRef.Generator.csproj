@@ -11,7 +11,7 @@
     <PackageReference Include="JetBrains.Refasmer" Version="2.0.3" />
     <PackageReference Include="NuGet.Packaging" Version="7.9.0" />
     <!-- Overrides the vulnerable version that NuGet.Packaging depends on. -->
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
   </ItemGroup>
 
   <ItemGroup>
